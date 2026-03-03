@@ -6,7 +6,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NicolaVivante/lab-2026.git"
-	
   },
   "license": "ISC",
   "author": "",
@@ -14,5 +13,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.19"
   }
 }
