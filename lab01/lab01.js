@@ -71,7 +71,13 @@ function FilmLibrary() {
 
 	this.UpdateFilmRating = (filmId, newRating) => {
 		let filmToUpdate = this.films.find((film) => film.Id === filmId);
-		filmToUpdate.UpdateRating(newRating);
+		if (filmToUpdate) {
+			filmToUpdate.UpdateRating(newRating);
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	this.PrintFilms = () => {
@@ -100,10 +106,13 @@ console.log("By date ascending");
 library.SortByDateAsc();
 library.PrintFilms();
 
-console.log("By rating descending");
+console.log("By rating descending (updated rating of f5)");
+library.UpdateFilmRating(5, 5);
 library.SortByRatingDesc();
 library.PrintFilms();
 
 console.log("Without film 3");
 library.RemoveFilm(3);
 library.PrintFilms();
+
+
