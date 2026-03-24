@@ -2,7 +2,8 @@
 import morgan from "morgan";
 import express from "express";
 import { check, validationResult } from "express-validator";
-import { listMovies, getMovie, addMovie, updateRating, updateFavorite, deleteMovie } from "./dao.js";
+import { listMovies, getMovie, addMovie, updateRating, updateFavorite, deleteMovie, updateMovie } from "./dao.js";
+import dayjs from "dayjs";
 
 // app creation and configuration
 const app = express();
@@ -46,27 +47,54 @@ app.post("/api/movies", [
   check("favorite").isBoolean(),
   check("rating").isNumeric(),
   check("userId").isNumeric(),
-  check("date").isDate({format: "YYYY-MM-DD", strictMode: true})
+  check("watchDate").isDate({format: "YYYY-MM-DD", strictMode: true})
 ], async (req, resp) => {
 	const errors = validationResult(req);
 	if (!errors.isEmpty()) {
-		return res.status(422).json({errors: errors.array()});
+		return resp.status(422).json({errors: errors.array()});
 	}
 
 	const newMovie = req.body;
+	newMovie.watchDate = dayjs(newMovie);
 
 	try {
-		await addMovie(newMovie);
-		resp.status(201).send();
+		const id = await addMovie(newMovie);
+		resp.status(201).location(id).send();
 	}
-	catch {
+	catch (err) {
+		console.log(err);
 		resp.status(500).end();
 	}
 
 });
 
 // put movie
-// TODO
+app.put("/api/movies/:movieId", [
+  check("title").notEmpty(),
+  check("favorite").isBoolean(),
+  check("rating").isNumeric(),
+  check("userId").isNumeric(),
+  check("watchDate").isDate({format: "YYYY-MM-DD", strictMode: true})
+], async (req, resp) => {
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return resp.status(422).json({errors: errors.array()});
+	}
+
+	const movieToUpdate = req.body;
+  	movieToUpdate.id = req.params.movieId;
+	
+	try {
+		const numChanges = await updateMovie(movieToUpdate);
+		if (numChanges === 1)
+			resp.status(204).end();
+		else
+      		resp.status(404).end();
+	} catch (err) {
+		console.log(err);
+		resp.status(500).end();
+	}
+});
 
 // update movie rating
 app.put("/api/movies/:movieId/rating", [

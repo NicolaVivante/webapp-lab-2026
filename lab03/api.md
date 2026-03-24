@@ -29,7 +29,7 @@ body:
 		"favorite": true,
 		"watchDate": "2026-01-01",
 		"rating" : 5,
-		"userID": 1
+		"userId": 1
 	}
 ]
 ```
@@ -62,7 +62,7 @@ body:
 	"favorite": true,
 	"watchDate": "2026-01-01",
 	"rating" : 5,
-	"userID": 1
+	"userId": 1
 }
 ```
 
@@ -88,7 +88,7 @@ body:
 	"favorite": true,
 	"watchDate": "2026-01-01",
 	"rating" : 5,
-	"userID": 1
+	"userId": 1
 }
 ```
 
@@ -116,7 +116,7 @@ body:
 	"favorite": true,
 	"watchDate": "2026-01-01",
 	"rating" : 5,
-	"userID": 1
+	"userId": 1
 }
 ```
 

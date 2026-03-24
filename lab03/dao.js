@@ -49,12 +49,23 @@ export const getMovie = (movieId) => {
 // aggiungere un nuovo Movie
 export const addMovie = (newMovie) => {
   return new Promise((resolve, reject) => {
-    const sql = "INSERT INTO films(id, title, favorite, watchDate, rating, userId) VALUES (?,?,?,?,?,?)";
+    const sql = "INSERT INTO films(id, title, isFavorite, watchDate, rating, userId) VALUES (?,?,?,?,?,?)";
     const date = newMovie.watchDate? newMovie.watchDate.format("YYYY-MM-DD") : null;
     const isFavorite = newMovie.isFavorite? 1 : 0;
 	db.run(sql, [newMovie.id, newMovie.title, isFavorite, date, newMovie.rating, newMovie.userId], function(err) {
       if(err) reject (err);
       else resolve(this.lastID);
+    });
+  });
+}
+
+// aggiornare un Movie
+export const updateMovie = (movie) => {
+	return new Promise((resolve, reject) => {
+    const sql = "UPDATE films SET title = ?, isFavorite = ?, watchDate = ?, rating = ?, userId = ? WHERE id = ?";
+	db.run(sql, [movie.title, movie.favorite, movie.watchDate, movie.rating, movie.userId, movie.id], function(err) {
+      if(err) reject (err);
+      else resolve(this.changes);
     });
   });
 }
@@ -89,6 +100,7 @@ export const updateFavorite = (movieId, isFavorite) => {
   });
 }
 
+// cancellare un movie
 export const deleteMovie = (movieId) => {
   return new Promise((resolve, reject) => {
     const sql = "DELETE FROM films WHERE id = ?";
