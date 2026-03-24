@@ -88,3 +88,13 @@ export const updateFavorite = (movieId, isFavorite) => {
     });
   });
 }
+
+export const deleteMovie = (movieId) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM films WHERE id = ?";
+    db.run(sql, [movieId], function(err) {
+      if (err) reject(err);
+      else resolve(this.changes);
+    })
+  });
+}

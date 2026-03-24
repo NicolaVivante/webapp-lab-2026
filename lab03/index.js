@@ -2,7 +2,7 @@
 import morgan from "morgan";
 import express from "express";
 import { check, validationResult } from "express-validator";
-import { listMovies, getMovie, addMovie, updateRating, updateFavorite } from "./dao.js";
+import { listMovies, getMovie, addMovie, updateRating, updateFavorite, deleteMovie } from "./dao.js";
 
 // app creation and configuration
 const app = express();
@@ -115,7 +115,21 @@ app.put("/api/movies/:movieId/favorite", [
 });
 
 // delete movie
-// TODO
+app.delete("/api/movies/:movieId", async (req, resp) => {
+	const movieId = req.params.movieId;
+
+	try {
+		const deletedLines = await deleteMovie(movieId);
+		if (deletedLines === 1)
+			resp.status(204).end();
+		else
+			resp.status(404).end();
+	} catch (err) {
+		console.log(err);
+		resp.status(500).end();
+	}
+
+});
 
 
 // server start
