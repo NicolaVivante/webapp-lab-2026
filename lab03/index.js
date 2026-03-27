@@ -16,10 +16,39 @@ app.use(morgan("dev"));
 // endpoints creation
 
 // list movies
-// TODO: filters
 app.get("/api/movies", async (req, resp) => {
 	try {
-		const movies = await listMovies();
+		const queryParams = req.query;
+		const favorite = queryParams.favorite;
+		const mostRated = queryParams.most_rated;
+		const seenRecently = queryParams.seen_recently;
+		const unseen = queryParams.unseen;
+
+		let movies = await listMovies();
+
+		// get only movies that are marked as favorite
+		if (favorite == "true") {
+			movies = movies.filter((m) => m.favorite);
+			console.log("filtering movies");
+		}
+		// get only movies with max rating (5)
+		if (mostRated == "true") {
+			movies = movies.filter((m) => m.rating === 5);
+		}
+		// get only movies that were watched at most 31 days ago
+		if (seenRecently == "true") {
+			const currentDate = dayjs();
+			movies = movies.filter((m) => {
+				if (m.watchDate === null) return false;
+				return currentDate.diff(m.watchDate, 'day') <= 31;
+			});
+		}
+		// get only movies that haven't been watched
+		if (unseen == "true") {
+			movies = movies.filter((m) => m.watchDate === null);
+		}
+
+		// return filtered movies
 		resp.json(movies);
 	}
 	catch {
