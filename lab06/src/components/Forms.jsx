@@ -8,7 +8,7 @@ function AddFilmForm(props) {
 		title: "L'ultimo samurai", 
 		watchDate: dayjs(), 
 		rating: 4,
-		isFavorite: true
+		favorite: "on"
 	}
 	
 	const handleAdd = async (prevState, formData) => {
@@ -45,7 +45,7 @@ function AddFilmForm(props) {
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>favorite</Form.Label>
-				<Form.Check name="favorite" type="checkbox" defaultValue={formState.isFavorite}></Form.Check>
+				<Form.Check name="favorite" type="checkbox" defaultChecked={formState.favorite}></Form.Check>
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>watchDate</Form.Label>
@@ -63,23 +63,20 @@ function AddFilmForm(props) {
 }
 
 function EditFilmForm(props) {
-	// let default_film = {
-	// 	title: "L'ultimo samurai", 
-	// 	watchDate: dayjs(), 
-	// 	rating: 4,
-	// 	isFavorite: true
-	// }
-
 	let initial_film = {
 		title: props.initial_film?.title, 
 		watchDate: dayjs(props.initial_film?.watchDate), 
 		rating: props.initial_film?.rating,
-		isFavorite: props.initial_film?.isFavorite
+		favorite: props.initial_film?.favorite,
+		id: props.initial_film?.id,
+		userId: props.initial_film?.userId
 	}
 
 	const handleEdit = async (prevState, formData) => {
 		// creare un oggetto dal formData
 		const film = Object.fromEntries(formData.entries());
+		film.id = initial_film.id;
+		film.userId = initial_film.userId;
 
 		// esempio di validazione
 		film.watchDate = dayjs(film.watchDate);
@@ -93,6 +90,13 @@ function EditFilmForm(props) {
 			film.error = "The film title can't be empty, please fix it!"
 			return film;
 		}
+
+		if (film.rating > 5 || film.rating < 0) {
+			film.error = "The film rating, if present, must be between 0 and 5"
+			return film;
+		}
+
+		film.favorite = film.favorite? true : false;
 
 		props.editFilmAction(film);
 		return initial_film;
@@ -111,7 +115,7 @@ function EditFilmForm(props) {
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>favorite</Form.Label>
-				<Form.Check name="favorite" type="checkbox" defaultValue={formState.isFavorite}></Form.Check>
+				<Form.Check name="favorite" type="checkbox" defaultChecked={formState.favorite}></Form.Check>
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>watchDate</Form.Label>
@@ -119,7 +123,7 @@ function EditFilmForm(props) {
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>Rating</Form.Label>
-				<Form.Control name="rating" required={true} defaultValue={formState.rating}></Form.Control>
+				<Form.Control name="rating" defaultValue={formState.rating}></Form.Control>
 			</Form.Group>
 			
 			{<Button variant="primary" type="submit">Save changes</Button>}

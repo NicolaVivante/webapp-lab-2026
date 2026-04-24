@@ -59,7 +59,7 @@ function App() {
 	const addNewFilm = (formFilm) => {
 		const id = Math.max(...films.map(f => f.id)) + 1;
 		const userId = films.map(f => f.userId)[0];
-		const filmObj = new Film(id, formFilm.title, formFilm.isFavorite, formFilm.watchDate, formFilm.rating, userId)
+		const filmObj = new Film(id, formFilm.title, formFilm.favorite, formFilm.watchDate, formFilm.rating, userId)
 		console.log("New film" + JSON.stringify(filmObj));
 		setFilms((prevFilms) => {
 			return [...prevFilms, filmObj];
@@ -68,8 +68,20 @@ function App() {
 	}
 
 	const editFilm = (formFilm) => {
-		console.log("Edit film" + JSON.stringify(formFilm));
-		// setFormMode("hidden");
+		const filmObj = new Film(formFilm.id, formFilm.title, formFilm.favorite, 
+						formFilm.watchDate, formFilm.rating, formFilm.userId);
+		console.log("Edit film" + JSON.stringify(formFilm) + ", " + JSON.stringify(filmObj));
+		setFilms((prevFilms) => {
+			return prevFilms.map((film) => {
+				if (film.id !== formFilm.id) {
+					return film;
+				}
+				else {
+					return filmObj;
+				}
+			});
+		});
+		setFormMode("hidden");
 	}
 	
 	const onEdit = (film) => {
