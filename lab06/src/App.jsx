@@ -5,7 +5,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './App.css';
-import {INITIAL_FILMS} from "./films.mjs";
+import {INITIAL_FILMS, Film} from "./films.mjs";
 
 import dayjs from 'dayjs';
 
@@ -14,7 +14,7 @@ import {Button, Collapse, Col, Container, Row} from 'react-bootstrap/';
 import Filters from './components/Filters';
 import Header from "./components/Header.jsx";
 import FilmList from "./components/FilmList.jsx";
-import FilmAddForm from "./components/Forms.jsx";
+import {AddFilmForm, EditFilmForm} from "./components/Forms.jsx";
 
 function App() {
     /**
@@ -46,15 +46,36 @@ function App() {
     // This is not optimal - better ways will be introduced in the upcoming labs
     const [films, setFilms] = useState(INITIAL_FILMS);
 
+	// This determines if the add / edit film forms are shown
+	// values are "hidden", "add", "edit"
+    const [formMode, setFormMode] = useState("hidden");
+
+	// Currently selected film
+	const [selectedFilm, setSelectedFilm] = useState();
+
     // This state controls the expansion of the sidebar (on small breakpoints only)
     const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
-	const test_function = (film) => {
-		const id = Math.max(...films.map(ans => ans.id)) + 1;
-		console.log("Test function called" + JSON.stringify(film));
+	const addNewFilm = (formFilm) => {
+		const id = Math.max(...films.map(f => f.id)) + 1;
+		const userId = films.map(f => f.userId)[0];
+		const filmObj = new Film(id, formFilm.title, formFilm.isFavorite, formFilm.watchDate, formFilm.rating, userId)
+		console.log("New film" + JSON.stringify(filmObj));
 		setFilms((prevFilms) => {
-			return [...prevFilms, film];
+			return [...prevFilms, filmObj];
 		});
+		setFormMode("hidden");
+	}
+
+	const editFilm = (formFilm) => {
+		console.log("Edit film" + JSON.stringify(formFilm));
+		// setFormMode("hidden");
+	}
+	
+	const onEdit = (film) => {
+		setSelectedFilm(film);
+		console.log("Editing film " + JSON.stringify(film));
+		setFormMode("edit");
 	}
 
     return (
@@ -72,18 +93,24 @@ function App() {
                     </Collapse>
                     <Col md={9} className="pt-3">
                         <h1><span id="filter-title">{filters[activeFilter].label}</span> films</h1>
-                        <FilmList films={films.filter(filters[activeFilter].filterFunction)}/>
-				<FilmAddForm addFilmAction={test_function} ></FilmAddForm>
+                        <FilmList films={films.filter(filters[activeFilter].filterFunction)} editCallback={onEdit}/>
+						<hr/>
+						{formMode === "add" && <AddFilmForm addFilmAction={addNewFilm} ></AddFilmForm> }
+						{/* key is used to update form default data when selected changes
+						(initial film is the default data)*/}
+						{formMode === "edit" && <EditFilmForm key={selectedFilm.id} editFilmAction={editFilm} initial_film={selectedFilm} ></EditFilmForm> }
                     </Col>
-					
+					 
                 </Row>
 				
-                {/* <Button
+				
+                {formMode !== "add" && <Button
                     variant="primary"
                     className="rounded-circle fixed-right-bottom"
+					onClick={() => {setFormMode("add")}}
                 >
                     <i className="bi bi-plus"></i>
-                </Button> */}
+                </Button>}
             </Container>
         </div>);
 }

@@ -4,11 +4,16 @@ import {Col, Row} from 'react-bootstrap/';
 import PropTypes from 'prop-types';
 import {ListGroup, ListGroupItem} from "react-bootstrap";
 
-function FilmList(props) {
-    const {films} = props;
+function FilmList({films, editCallback}) {
+	
+	// console.log("films" + JSON.stringify(props.films))
+	// for (let film of props.films) {
+	// 	console.log("film id: " + film.id)
+	// }
+
 
     return (<ListGroup id="films-list" variant="flush">
-        {films.map((film) => <FilmInList filmData={film} key={film.id}/>)}
+        {films.map((film) => <FilmInList filmData={film} key={film.id} editCallback={editCallback}/>)}
     </ListGroup>);
 }
 
@@ -16,7 +21,7 @@ FilmList.propTypes = {
     films: PropTypes.array.isRequired,
 };
 
-function FilmInList({filmData}) {
+function FilmInList({filmData, editCallback}) {
 
     return (<ListGroupItem>
         <Row className="gy-2">
@@ -45,7 +50,7 @@ function FilmInList({filmData}) {
                     <Rating rating={filmData.rating} maxStars={5}/>
                 </div>
                 <div className="d-none d-xl-flex actions">
-                    <i className="bi bi-pencil"></i>
+                    <i className="bi bi-pencil" onClick={() => editCallback(filmData)}></i>
                     <i className="bi bi-trash"></i>
                 </div>
             </Col>
