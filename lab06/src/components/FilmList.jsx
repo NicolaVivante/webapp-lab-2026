@@ -36,8 +36,10 @@ function FilmInList({filmData, editCallback}) {
             <Col xs={6} xl={3} className="text-end text-xl-center">
             <span className="custom-control custom-checkbox">
               <span className="custom-control custom-checkbox">
-                          <input type="checkbox" className="custom-control-input" defaultChecked={filmData.favorite}/>
-                          <label className="custom-control-label">Favorite</label>
+							{filmData.favorite? <i className="text-danger bi bi-heart-fill"></i> : <i className="text-danger bi bi-heart"></i>} 
+							
+                          {/* <input type="checkbox" className="custom-control-input" defaultChecked={filmData.favorite}/> */}
+                          {/* <label className="custom-control-label">Favorite</label> */}
                         </span>
             </span>
             </Col>

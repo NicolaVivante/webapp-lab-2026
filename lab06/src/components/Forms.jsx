@@ -1,12 +1,12 @@
 import dayjs from "dayjs";
 import { useActionState } from "react";
-import {Form, Button, Alert, Container} from 'react-bootstrap/';
+import {Form, Button, Alert, Container, Row, Col} from 'react-bootstrap/';
 
 
 function AddFilmForm(props) {
 	const default_film = {
 		title: "L'ultimo samurai", 
-		watchDate: dayjs(), 
+		watchDate: dayjs().format("YYYY-MM-DD"), 
 		rating: 4,
 		favorite: "on"
 	}
@@ -15,16 +15,23 @@ function AddFilmForm(props) {
 		// creare un oggetto dal formData
 		const film = Object.fromEntries(formData.entries());
 
-		// esempio di validazione
-		film.watchDate = dayjs(film.watchDate);
-
-		if (dayjs().diff(film.watchDate) < 0) {
+		film.favorite = film.favorite? true : false;
+		
+		if (film.watchDate === "") {
+			film.watchDate = null;
+		}
+		if (film.watchDate && dayjs().diff(dayjs(film.watchDate)) < 0) {
 			film.error = "The watch date must be a valid date"
 			return film;
 		}
 
 		if (film.title.trim()==="") {
 			film.error = "The film title can't be empty, please fix it!"
+			return film;
+		}
+
+		if (film.rating > 5 || film.rating < 0) {
+			film.error = "The film rating, if present, must be between 0 and 5"
 			return film;
 		}
 
@@ -38,18 +45,16 @@ function AddFilmForm(props) {
 		<>
 		{formState.error && <Alert variant="secondary">{formState.error}</Alert>}
 		<Form action={formAction}>
-			<Form.Group></Form.Group>
-			<Form.Group>
+			<Form.Group className="mb-3">
 				<Form.Label>Title</Form.Label>
 				<Form.Control name="title" type="text" required={true} minLength={2} defaultValue={formState.title}></Form.Control>
 			</Form.Group>
-			<Form.Group className="mb-3">
-				<Form.Label>favorite</Form.Label>
-				<Form.Check name="favorite" type="checkbox" defaultChecked={formState.favorite}></Form.Check>
+			<Form.Group className="mb-3" >
+				<Form.Check name="favorite" type="checkbox" label="Favorite" defaultChecked={formState.favorite}></Form.Check>
 			</Form.Group>
 			<Form.Group className="mb-3">
-				<Form.Label>watchDate</Form.Label>
-				<Form.Control name="watchDate" type="date" defaultValue={formState.watchDate?.format("YYYY-MM-DD")}></Form.Control>
+				<Form.Label>Watch Date</Form.Label>
+				<Form.Control name="watchDate" type="date" defaultValue={formState.watchDate}></Form.Control>
 			</Form.Group>
 			<Form.Group className="mb-3">
 				<Form.Label>Rating</Form.Label>
@@ -65,7 +70,7 @@ function AddFilmForm(props) {
 function EditFilmForm(props) {
 	let initial_film = {
 		title: props.initial_film?.title, 
-		watchDate: dayjs(props.initial_film?.watchDate), 
+		watchDate: props.initial_film?.watchDate, 
 		rating: props.initial_film?.rating,
 		favorite: props.initial_film?.favorite,
 		id: props.initial_film?.id,
@@ -78,10 +83,12 @@ function EditFilmForm(props) {
 		film.id = initial_film.id;
 		film.userId = initial_film.userId;
 
-		// esempio di validazione
-		film.watchDate = dayjs(film.watchDate);
-
-		if (dayjs().diff(film.watchDate) < 0) {
+		film.favorite = film.favorite? true : false;
+		
+		if (film.watchDate === "") {
+			film.watchDate = null;
+		}
+		if (film.watchDate && dayjs().diff(dayjs(film.watchDate)) < 0) {
 			film.error = "The watch date must be a valid date"
 			return film;
 		}
@@ -96,8 +103,6 @@ function EditFilmForm(props) {
 			return film;
 		}
 
-		film.favorite = film.favorite? true : false;
-
 		props.editFilmAction(film);
 		return initial_film;
 	}
@@ -109,16 +114,15 @@ function EditFilmForm(props) {
 		{formState.error && <Alert variant="secondary">{formState.error}</Alert>}
 		<Form action={formAction}>
 			<Form.Group></Form.Group>
-			<Form.Group>
+			<Form.Group className="mb-3">
 				<Form.Label>Title</Form.Label>
 				<Form.Control name="title" type="text" required={true} minLength={2} defaultValue={formState.title}></Form.Control>
 			</Form.Group>
 			<Form.Group className="mb-3">
-				<Form.Label>favorite</Form.Label>
-				<Form.Check name="favorite" type="checkbox" defaultChecked={formState.favorite}></Form.Check>
+				<Form.Check name="favorite" type="checkbox" label="Favorite" defaultChecked={formState.favorite}></Form.Check>
 			</Form.Group>
 			<Form.Group className="mb-3">
-				<Form.Label>watchDate</Form.Label>
+				<Form.Label>Watch date</Form.Label>
 				<Form.Control name="watchDate" type="date" defaultValue={formState.watchDate?.format("YYYY-MM-DD")}></Form.Control>
 			</Form.Group>
 			<Form.Group className="mb-3">
